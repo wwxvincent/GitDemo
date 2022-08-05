@@ -1,2 +1,8 @@
-package PACKAGE_NAME;public class Hello {
+public class Hello {
+
+    public static void main(String[] args) throws Exception {
+        SingletonDemo obj = SingletonDemo.getInstance();
+        obj.getTranslation();
+
+    }
 }
