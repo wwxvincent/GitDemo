@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GitDemo.iml" filepath="$PROJECT_DIR$/.idea/GitDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HaveATry/HaveATry.iml" filepath="$PROJECT_DIR$/HaveATry/HaveATry.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HaveATry.main.iml" filepath="$PROJECT_DIR$/.idea/modules/HaveATry.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HaveATry.test.iml" filepath="$PROJECT_DIR$/.idea/modules/HaveATry.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/Leetcode/Leetcode.iml" filepath="$PROJECT_DIR$/Leetcode/Leetcode.iml" />
     </modules>
   </component>
