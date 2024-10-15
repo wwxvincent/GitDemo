@@ -33,12 +33,12 @@ public class CxfConfig {
     @Bean (name = Bus.DEFAULT_BUS_ID)
     public SpringBus springBus() {
         return new SpringBus();
-    }
-
-    @Bean
-    public Endpoint endpoint() {
-        EndpointImpl endpoint = new EndpointImpl(new SpringBus(), userServer);
-        endpoint.publish("/api");
-        return endpoint;
+//    }
+//
+//    @Bean
+//    public Endpoint endpoint() {
+//        EndpointImpl endpoint = new EndpointImpl(new SpringBus(), userServer);
+//        endpoint.publish("/api");
+//        return endpoint;
     }
 }
