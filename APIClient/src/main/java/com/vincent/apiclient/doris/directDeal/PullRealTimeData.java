@@ -1,4 +1,4 @@
-package com.vincent.apiclient;
+package com.vincent.apiclient.doris.directDeal;
 
 
 import java.io.BufferedReader;
@@ -20,11 +20,65 @@ import net.sf.json.JSONObject;
  * @Date: 10/14/24
  * @Description:
  */
-public class realTimeStreamLoader {
-    public static void main (String[] args) {}
-    public static String output () {
-        String url = "http://73.push2delay.eastmoney.com/api/qt/stock/details/sse?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55&mpi=2000&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&pos=-0&secid=0.300059&wbp2u=%7C0%7C0%7C0%7Cweb";
+public class PullRealTimeData {
+    public static void main (String[] args) {
+//        System.out.println(getCertainStockDataAllYear("1.601998"));
+//        String head = "https://push2his.eastmoney.com/api/qt/stock/kline/get?cb=jQuery1124004415451619732835_1674786190165&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61&ut=7eea3edcaed734bea9cbfc24409ed989&klt=101&fqt=1&secid=";
+//        String tail ="&beg=0&end=20500000&_=1674786190416";
+//        String marketCode = "1.601998";
+//        String url = head+marketCode+tail;
+//        System.out.println(url);
+        System.out.println(getCertainStockData("0.300059"));
 
+    }
+    public static String getCertainStockDataAllYear (String marketCode) {
+        String head = "https://push2his.eastmoney.com/api/qt/stock/kline/get?cb=jQuery1124004415451619732835_1674786190165&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61&ut=7eea3edcaed734bea9cbfc24409ed989&klt=101&fqt=1&secid=";
+        String tail ="&beg=0&end=20500000&_=1674786190416";
+        String url = head+marketCode+tail;
+        JSONObject stockObject = httpRequest(url,"GET","","");
+        JSONObject dataObject = stockObject.getJSONObject("data");
+//        System.out.println(dataObject.toString());
+        String code = dataObject.getString("code");
+        JSONArray details = dataObject.getJSONArray("details");
+        //reassemble array to jason
+        // 创建一个 JSONArray 来存储所有的 newObject
+        JSONArray jsonArray = new JSONArray();
+        String recordDate;
+        String price = null;
+        String f1;
+        String f2;
+        String f3;
+        for (int i = 0; i < details.size(); i++) {
+            String[] array = details.getString(i).split(",");
+            if(array.length != 5) return null;
+            recordDate = array[0];
+            price = array[1];
+            f1 = array[2];
+            f2 = array[3];
+            f3 = array[4];
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            // 获取当前日期
+            Date today = new Date();
+            // 格式化当前日期
+            String formattedDate = dateFormat.format(today);
+            JSONObject newObject = new JSONObject();
+            newObject.put("code", code); // 假设 code 是每条记录共有的
+            newObject.put("date", formattedDate);
+            newObject.put("recordTime", recordDate);
+            newObject.put("market", "0");
+            newObject.put("price", price);
+            newObject.put("f1", f1);
+            newObject.put("f2", f2);
+            newObject.put("f3", f3);
+            jsonArray.add(newObject);
+        }
+
+        return jsonArray.toString();
+    }
+    public static String getCertainStockData (String marketCode) {
+        String head = "http://73.push2delay.eastmoney.com/api/qt/stock/details/sse?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55&mpi=2000&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&pos=-0&secid=";
+        String tail ="&wbp2u=%7C0%7C0%7C0%7Cweb";
+        String url = head+marketCode+tail;
         JSONObject stockObject = httpRequest(url,"GET","","");
         JSONObject dataObject = stockObject.getJSONObject("data");
 //        System.out.println(dataObject.toString());

@@ -9,8 +9,6 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import net.sf.json.JSONArray;
@@ -20,13 +18,12 @@ import net.sf.json.JSONObject;
  * @Date: 10/14/24
  * @Description:
  */
-public class configue {
-    public static void main (String[] args) {
-        String url = "http://73.push2delay.eastmoney.com/api/qt/stock/details/sse?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55&mpi=2000&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&pos=-0&secid=0.300059&wbp2u=%7C0%7C0%7C0%7Cweb";
+public class pullData {
+    public static String getJsonData (String url, String market) {
+//        String url = "http://73.push2delay.eastmoney.com/api/qt/stock/details/sse?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55&mpi=2000&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&pos=-0&secid=0.300059&wbp2u=%7C0%7C0%7C0%7Cweb";
 
         JSONObject stockObject = httpRequest(url,"GET","","");
         JSONObject dataObject = stockObject.getJSONObject("data");
-//        System.out.println(dataObject.toString());
         String code = dataObject.getString("code");
         JSONArray details = dataObject.getJSONArray("details");
         //reassemble array to jason
@@ -39,7 +36,7 @@ public class configue {
         String f3;
         for (int i = 0; i < details.size(); i++) {
             String[] array = details.getString(i).split(",");
-            if(array.length != 5) return;
+            if(array.length != 5) return null;
             recordDate = array[0];
             price = array[1];
             f1 = array[2];
@@ -52,7 +49,7 @@ public class configue {
             String formattedDate = dateFormat.format(today);
             JSONObject newObject = new JSONObject();
             newObject.put("code", code); // 假设 code 是每条记录共有的
-            newObject.put("sector", "0");
+            newObject.put("market", market);
             newObject.put("recordDate", recordDate);
             newObject.put("Date", formattedDate);
             newObject.put("price", price);
@@ -61,8 +58,7 @@ public class configue {
             newObject.put("f3", f3);
             jsonArray.add(newObject);
         }
-        System.out.println(jsonArray.size());
-        System.out.println(jsonArray.toString());
+        return jsonArray.toString();
     }
 
 
@@ -124,7 +120,6 @@ public class configue {
                 // e.printStackTrace();
             }
         }
-//        System.out.println(buffer.toString());
 
         if (isWho.equals("realTimeTrade")) {
             mydata = buffer.toString();

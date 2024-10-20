@@ -1,6 +1,4 @@
-package com.vincent.apiclient;
-
-
+package com.vincent.apiclient.doris.directDeal;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
@@ -12,23 +10,18 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.io.IOException;
 
+
 /**
  * @Author: Vincent(Wenxuan) Wang
- * @Date: 10/14/24
+ * @Date: 10/19/24
  * @Description:
  */
-public class realTimeController {
+public class dorisUtil {
     // FE IP Address
     private final static String HOST = "192.168.2.130";
     // FE port
@@ -36,7 +29,11 @@ public class realTimeController {
     //db name
     private final static String DATABASE = "doris_db";
     //table name
-    private final static String TABLE = "real_time_stock_data";
+    private final static String TABLE_REAL_TIME_STOCK_DATA = "real_time_stock_data";
+    //table name
+    private final static String TABLE_ALL_STOCK_INFO = "all_stock_temp";
+    //table name
+    private final static String TABLE_CERTAIN_HISTORY_DATA= "history_data";
     // user name
     private final static String USER = "root";
     // user password
@@ -44,7 +41,14 @@ public class realTimeController {
     // The path of the local file to be imported
     private final static String LOAD_FILE_NAME = "";
     //http path of stream load task submission
-    private final static String loadUrl = String.format("http://%s:%s/api/%s/%s/_stream_load", HOST, PORT, DATABASE, TABLE);
+    private final static String loadUrl_TABLE_REAL_TIME_STOCK_DATA = String.format("http://%s:%s/api/%s/%s/_stream_load", HOST, PORT, DATABASE, TABLE_REAL_TIME_STOCK_DATA);
+
+    private final static String loadUrl_TTABLE_ALL_STOCK_INFO = String.format("http://%s:%s/api/%s/%s/_stream_load", HOST, PORT, DATABASE, TABLE_ALL_STOCK_INFO);
+
+    private final static String loadUrl_TABLE_CERTAIN_HISTORY_DATA = String.format("http://%s:%s/api/%s/%s/_stream_load", HOST, PORT, DATABASE, TABLE_CERTAIN_HISTORY_DATA);
+
+    private static int count = 0;
+    private static int stockNum = 0;
 
     //构建HTTP客户端
     private final static HttpClientBuilder httpClientBuilder = HttpClients
@@ -58,13 +62,20 @@ public class realTimeController {
             });
 
 
+
     /**
      * JSON格式的数据导入
-     * @param jsonData
+     *
      * @throws Exception
      */
-    public void loadJson(String jsonData) throws Exception {
+    public static void loadJson(String jsonData, String type) throws Exception {
         try (CloseableHttpClient client = httpClientBuilder.build()) {
+            String loadUrl = switch (type) {
+                case "stockHistory" -> loadUrl_TABLE_CERTAIN_HISTORY_DATA;
+                case "allStockInfo" -> loadUrl_TTABLE_ALL_STOCK_INFO;
+                case "certainStock" -> loadUrl_TABLE_REAL_TIME_STOCK_DATA;
+                default -> "";
+            };
             HttpPut put = new HttpPut(loadUrl);
             put.removeHeaders(HttpHeaders.CONTENT_LENGTH);
             put.removeHeaders(HttpHeaders.TRANSFER_ENCODING);
@@ -100,24 +111,49 @@ public class realTimeController {
     }
 
     /**
+     * 文件数据导入
+     * @ param file
+     */
+//    public void load(File file) throws Exception {
+//        try (CloseableHttpClient client = httpClientBuilder.build()) {
+//            HttpPut put = new HttpPut(loadUrl);
+//            put.removeHeaders(HttpHeaders.CONTENT_LENGTH);
+//            put.removeHeaders(HttpHeaders.TRANSFER_ENCODING);
+//            put.setHeader(HttpHeaders.EXPECT, "100-continue");
+//            put.setHeader(HttpHeaders.AUTHORIZATION, basicAuthHeader(USER, PASSWORD));
+//            // You can set stream load related properties in the Header, here we set label and column_separator.
+//            put.setHeader("label", UUID.randomUUID().toString());
+//            put.setHeader("column_separator", ",");
+//            // Set up the import file. Here you can also use StringEntity to transfer arbitrary data.
+//            FileEntity entity = new FileEntity(file);
+//            put.setEntity(entity);
+//            try (CloseableHttpResponse response = client.execute(put)) {
+//                String loadResult = "";
+//                if (response.getEntity() != null) {
+//                    loadResult = EntityUtils.toString(response.getEntity());
+//                }
+//                final int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode != 200) {
+//                    throw new IOException(String.format("Stream load failed. status: %s load result: %s", statusCode, loadResult));
+//                }
+//                System.out.println("Get load result: " + loadResult);
+//            }
+//        }
+//    }
+
+    /**
      * 封装认证信息
      * @param username
      * @param password
      * @return
      */
-    private String basicAuthHeader(String username, String password) {
+    private static String basicAuthHeader(String username, String password) {
         final String tobeEncode = username + ":" + password;
         byte[] encoded = Base64.encodeBase64(tobeEncode.getBytes(StandardCharsets.UTF_8));
         return "Basic " + new String(encoded);
     }
 
 
-    public static void main(String[] args) throws Exception {
-        realTimeController loader = new realTimeController();
 
-        String jasonData = realTimeStreamLoader.output();
-        System.out.println(jasonData);
 
-        loader.loadJson(jasonData);
-    }
 }
