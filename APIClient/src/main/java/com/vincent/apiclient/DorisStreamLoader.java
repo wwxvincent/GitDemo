@@ -28,7 +28,7 @@ import java.io.IOException;
  * @Date: 10/14/24
  * @Description:
  */
-public class DorisStreamLoader {
+public class  DorisStreamLoader {
     // FE IP Address
     private final static String HOST = "192.168.2.130";
     // FE port
