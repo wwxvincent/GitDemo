@@ -274,6 +274,12 @@ public class StockUtil {
         } else if (type.equals("stockHistory")) {
             head.append("https://push2his.eastmoney.com/api/qt/stock/kline/get?cb=jQuery1124004415451619732835_1674786190165&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61&ut=7eea3edcaed734bea9cbfc24409ed989&klt=101&fqt=1&secid=");
             tail.append("&beg=0&end=20500000&_=1674786190416");
+        } else if (type.equals("allStockInfo")) {
+            String url2 = "http://8.push2.eastmoney.com/api/qt/clist/get?cb=jQuery112403408140944676902_1605794350039&pn=1&pz=6000&po=1&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f22,f11,f62,f128,f136,f115,f152&_=1605794350063\n";
+
+            List<String> urlsList = new ArrayList<String>();
+            urlsList.add(url2);
+            return urlsList;
         }
 
         List<String> urlsList = new ArrayList<String>();

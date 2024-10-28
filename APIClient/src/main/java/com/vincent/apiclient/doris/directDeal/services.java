@@ -21,7 +21,7 @@ public class services {
 
     public static void main(String[] args) throws Exception {
 
-        starter(ALL_HISTORY_INFO);
+        starter(ALL_STOCK_INFO);
 //        starter(REAL_TIME_INFO);
 
 

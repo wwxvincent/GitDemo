@@ -23,7 +23,9 @@ import java.io.IOException;
  */
 public class dorisUtil {
     // FE IP Address
-    private final static String HOST = "192.168.2.130";
+//    private final static String HOST = "192.168.2.130"; // local mac vm
+    private final static String HOST = "192.168.10.75"; //lenovo vm
+
     // FE port
     private final static int PORT = 8030;
     //db name
